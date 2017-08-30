@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.witlife.p2pinvest.activity.MainActivity">
+
+    <!--<include layout="@layout/title_bar"/>-->
+
+    <FrameLayout
+        android:id="@+id/framelayout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="5dp"
+        android:background="@color/selected_text_color" />
+
+    <RadioGroup
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/btn_main"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:button="@null"
+            android:drawableTop="@drawable/selector_icon_main"
+            android:gravity="center"
+            android:text="Main"
+            android:textSize="18sp"
+            android:textColor="@drawable/selector_icon_text" />
+
+        <RadioButton
+            android:id="@+id/btn_invest"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:button="@null"
+            android:drawableTop="@drawable/selector_icon_invest"
+            android:gravity="center"
+            android:text="invest"
+            android:textSize="18sp"
+            android:textColor="@drawable/selector_icon_text" />
+
+        <RadioButton
+            android:id="@+id/btn_me"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:button="@null"
+            android:drawableTop="@drawable/selector_icon_me"
+            android:gravity="center"
+            android:text="Me"
+            android:textColor="@drawable/selector_icon_red_text"
+            android:textSize="18sp" />
+
+        <RadioButton
+            android:id="@+id/btn_more"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:button="@null"
+            android:drawableTop="@drawable/selector_icon_more"
+            android:gravity="center"
+            android:text="More"
+            android:textColor="@drawable/selector_icon_text"
+            android:textSize="18sp" />
+
+    </RadioGroup>
+
+</LinearLayout>

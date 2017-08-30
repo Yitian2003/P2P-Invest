@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">P2PInvest</string>
+    <string name="title_activity_welcome">WelcomeActivity</string>
+
+    <string-array name="invest_title">
+        <item>All</item>
+        <item>Recommond</item>
+        <item>Hot</item>
+    </string-array>
+    <string name="title_activity_login">LoginActivity</string>
+</resources>
