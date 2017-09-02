@@ -50,7 +50,7 @@ public abstract class BaseActivity extends FragmentActivity{
         startActivity(intent);
     }
 
-    public void removeCurrentActivity(Activity activity){
+    public void removeCurrentActivity(){
         ActivityManager.getInstance().removeCurrent();
     }
 

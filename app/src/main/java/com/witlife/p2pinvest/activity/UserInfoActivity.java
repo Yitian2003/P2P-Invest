@@ -1,10 +1,13 @@
 package com.witlife.p2pinvest.activity;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -15,6 +18,9 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
+import android.provider.SyncStateContract;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
@@ -29,6 +35,7 @@ import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Transformation;
 import com.witlife.p2pinvest.R;
 import com.witlife.p2pinvest.bean.UserBean;
+import com.witlife.p2pinvest.common.ActivityManager;
 import com.witlife.p2pinvest.common.AppNetConfig;
 import com.witlife.p2pinvest.common.BaseActivity;
 import com.witlife.p2pinvest.util.BitmapUtils;
@@ -48,6 +55,7 @@ public class UserInfoActivity extends BaseActivity {
     public static final String USER_INFO = "user_info";
     public static final int CAMERA = 1001;
     public static final int GALLERY = 1000;
+    private static final int WRITE_EXTERNAL_STORAGE = 2000;
 
     @Bind(R.id.iv_back)
     ImageView ivBack;
@@ -61,8 +69,9 @@ public class UserInfoActivity extends BaseActivity {
     TextView tvUserChange;
     @Bind(R.id.btn_user_logout)
     Button btnUserLogout;
-    private UserBean user;
 
+    private UserBean user;
+    private Context context;
 
     @Override
     protected void initTitle() {
@@ -73,31 +82,37 @@ public class UserInfoActivity extends BaseActivity {
 
     @Override
     public void initData() {
+        context = this;
+
         Intent intent = getIntent();
         Bundle bundle = intent.getBundleExtra("data");
-        if (bundle != null){
-            user = (UserBean)bundle.getSerializable(USER_INFO);
+        if (bundle != null) {
+            user = (UserBean) bundle.getSerializable(USER_INFO);
         }
 
-        Picasso.with(this)
-                .load(user.getImageurl()).transform(new Transformation() {
-            @Override
-            public Bitmap transform(Bitmap source) {
+        if(user.getImageurl() != null){
+            Picasso.with(this)
+                    .load(user.getImageurl()).transform(new Transformation() {
+                @Override
+                public Bitmap transform(Bitmap source) {
 
-                //rescale bitmap
-                Bitmap bitmap = BitmapUtils.zoom(source, UIUtils.dp2px(70), UIUtils.dp2px(70));
+                    //rescale bitmap
+                    Bitmap bitmap = BitmapUtils.zoom(source, UIUtils.dp2px(70), UIUtils.dp2px(70));
 
-                bitmap = BitmapUtils.circleBitmap(source);
-                source.recycle();
-                return bitmap;
-            }
+                    bitmap = BitmapUtils.circleBitmap(source);
+                    source.recycle();
+                    return bitmap;
+                }
 
-            @Override
-            public String key() {
-                return "";
-            }
-        })
-                .into(ivUserIcon);
+                @Override
+                public String key() {
+                    return "";
+                }
+            })
+                    .into(ivUserIcon);
+        } else {
+            ivUserIcon.setImageResource(R.drawable.my_user_default);
+        }
 
         ivUserIcon.setOnClickListener(new View.OnClickListener() {
 
@@ -112,7 +127,7 @@ public class UserInfoActivity extends BaseActivity {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 Intent intent;
-                                switch (i){
+                                switch (i) {
                                     case 0:
                                         intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                                         startActivityForResult(intent, GALLERY);
@@ -128,6 +143,38 @@ public class UserInfoActivity extends BaseActivity {
                         .show();
             }
         });
+
+        ivBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ActivityManager.getInstance().removeCurrent();
+            }
+        });
+
+        btnUserLogout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // 1. clear data in sp
+                SharedPreferences sp = getSharedPreferences("user_info", Context.MODE_PRIVATE);
+                sp.edit().clear().commit();
+                //2, delete image in local
+                File fileDir;
+                if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+                    fileDir = getExternalFilesDir("");
+                } else {
+                    fileDir = getFilesDir();
+                }
+                File file = new File(fileDir, "icon.png");
+                if(file.exists()){
+                    file.delete();
+                }
+                //3. destroy all activity
+                ((BaseActivity) context).removeAll();
+                //((BaseActivity)getBaseContext()).removeAll();
+                //4, reload to main fragment
+                ((BaseActivity) context).startNewActivity(MainActivity.class, null);
+            }
+        });
     }
 
     @Override
@@ -141,17 +188,24 @@ public class UserInfoActivity extends BaseActivity {
 
         Bitmap source = null;
 
-        if(requestCode == CAMERA && resultCode == RESULT_OK && data != null){
+        if (requestCode == CAMERA && resultCode == RESULT_OK && data != null) {
             Bundle bundle = data.getExtras();
             source = (Bitmap) bundle.get("data");
 
-        } else if(requestCode == GALLERY && resultCode == RESULT_OK && data != null){
+            source = BitmapUtils.zoom(source, UIUtils.dp2px(70), UIUtils.dp2px(70));
+            Bitmap bitmap = BitmapUtils.circleBitmap(source);
+            source.recycle();
+            ivUserIcon.setImageBitmap(bitmap);
+
+            //updateImageToServer(bitmap);
+
+            saveImage(bitmap);
+
+        } else if (requestCode == GALLERY && resultCode == RESULT_OK && data != null) {
             Uri imageUri = data.getData();
             String pathResult = getPath(imageUri);
             source = BitmapFactory.decodeFile(pathResult);
-        }
 
-        if(source != null){
             source = BitmapUtils.zoom(source, UIUtils.dp2px(70), UIUtils.dp2px(70));
             Bitmap bitmap = BitmapUtils.circleBitmap(source);
             source.recycle();
@@ -161,6 +215,7 @@ public class UserInfoActivity extends BaseActivity {
 
             saveImage(bitmap);
         }
+
     }
 
 
@@ -185,7 +240,7 @@ public class UserInfoActivity extends BaseActivity {
                 params.put("image", encodedString);
                 params.put("phone", user.getPhone());
 
-                client.post(AppNetConfig.UPLOADIMAGE,params, new AsyncHttpResponseHandler() {
+                client.post(AppNetConfig.UPLOADIMAGE, params, new AsyncHttpResponseHandler() {
                     @Override
                     public void onSuccess(String content) {
                         Log.i("TAG", content);
@@ -200,14 +255,14 @@ public class UserInfoActivity extends BaseActivity {
                 return null;
             }
         }
-            UploadFileToServer server = new UploadFileToServer();
-            server.execute();
+        UploadFileToServer server = new UploadFileToServer();
+        server.execute();
     }
 
     //memory --> file
     private void saveImage(Bitmap bitmap) {
         File filesDir;
-        if(Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)){
+        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
             //path1: storage/sdcard/Android/data/package name/files
             filesDir = this.getExternalFilesDir("");
         } else {//internal storage
@@ -224,7 +279,7 @@ public class UserInfoActivity extends BaseActivity {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } finally {
-            if (fos != null){
+            if (fos != null) {
                 try {
                     fos.close();
                 } catch (IOException e) {
@@ -340,5 +395,15 @@ public class UserInfoActivity extends BaseActivity {
      */
     public static boolean isGooglePhotosUri(Uri uri) {
         return "com.google.android.apps.photos.content".equals(uri.getAuthority());
+    }
+
+    private void checkPermission(){
+        int permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+
+        if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, WRITE_EXTERNAL_STORAGE);
+        } else {
+            //callMethod();
+        }
     }
 }
