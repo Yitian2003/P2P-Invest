@@ -44,7 +44,14 @@
             android:configChanges="orientation|keyboardHidden|navigation"
             android:exported="false"
             android:screenOrientation="behind" />
-        <activity android:name=".activity.DepositActivity"></activity>
+        <activity android:name=".activity.DepositActivity" />
+        <activity android:name=".activity.WithdrawActivity" />
+        <activity android:name=".activity.LineCharActivity" />
+        <activity android:name=".activity.BarCharActivity" />
+        <activity android:name=".activity.PieCharActivity" />
+        <activity android:name=".activity.UserRegisterActivity"></activity>
+        <activity android:name=".activity.GestureEditActivity"/>
+        <activity android:name=".activity.GestureVerifyActivity"/>
     </application>
 
 </manifest>

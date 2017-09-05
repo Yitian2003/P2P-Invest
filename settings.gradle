@@ -1,1 +1,1 @@
-include ':app', ':alipay_demo'
+include ':app', ':alipay_demo', ':GestureLock'

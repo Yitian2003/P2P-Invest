@@ -21,9 +21,13 @@ import com.loopj.android.http.RequestParams;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Transformation;
 import com.witlife.p2pinvest.R;
+import com.witlife.p2pinvest.activity.BarCharActivity;
 import com.witlife.p2pinvest.activity.DepositActivity;
+import com.witlife.p2pinvest.activity.LineCharActivity;
 import com.witlife.p2pinvest.activity.LoginActivity;
+import com.witlife.p2pinvest.activity.PieCharActivity;
 import com.witlife.p2pinvest.activity.UserInfoActivity;
+import com.witlife.p2pinvest.activity.WithdrawActivity;
 import com.witlife.p2pinvest.bean.UserBean;
 import com.witlife.p2pinvest.common.BaseActivity;
 import com.witlife.p2pinvest.common.BaseFragment;
@@ -112,7 +116,28 @@ public class MeFragment extends BaseFragment {
         btnWithdraw.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                ((BaseActivity)getActivity()).startNewActivity(WithdrawActivity.class, null);
+            }
+        });
 
+        rlInvest.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ((BaseActivity)getActivity()).startNewActivity(LineCharActivity.class, null);
+            }
+        });
+
+        rlInvestDirect.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ((BaseActivity)getActivity()).startNewActivity(BarCharActivity.class, null);
+            }
+        });
+
+        rlAsset.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ((BaseActivity)getActivity()).startNewActivity(PieCharActivity.class, null);
             }
         });
     }
