@@ -1,9 +1,12 @@
 package com.witlife.p2pinvest.activity;
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.text.Html;
 import android.text.TextUtils;
 import android.view.View;
@@ -19,8 +22,11 @@ import com.atguigu.gesturelock.widget.GestureContentView;
 import com.atguigu.gesturelock.widget.GestureDrawline;
 
 import com.witlife.p2pinvest.R;
+import com.witlife.p2pinvest.fragment.MeFragment;
 
-public class GestureVerifyActivity extends Activity implements View.OnClickListener {
+public class GestureVerifyActivity extends FragmentActivity implements View.OnClickListener {
+
+    public static final String ME_FRAGMENT = "me_fragment";
     /** 手机号码*/
     public static final String PARAM_PHONE_NUMBER = "PARAM_PHONE_NUMBER";
     /** 意图 */
@@ -39,6 +45,8 @@ public class GestureVerifyActivity extends Activity implements View.OnClickListe
     private long mExitTime = 0;
     private int mParamIntentCode;
     private SharedPreferences mSharedPreferences;
+
+    private int tryTimes = 0;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -86,20 +94,33 @@ public class GestureVerifyActivity extends Activity implements View.OnClickListe
                         mGestureContentView.clearDrawlineState(0L);
 
                         Toast.makeText(GestureVerifyActivity.this, "Password Correct",Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent();
+                        intent.putExtra("verify_result",true);
+                        setResult(Activity.RESULT_OK,intent);
 
                         GestureVerifyActivity.this.finish();
                     }
 
                     @Override
                     public void checkedFail() {
+                        tryTimes++;
 
                         mGestureContentView.clearDrawlineState(1300L);
                         mTextTip.setVisibility(View.VISIBLE);
-                        mTextTip.setText(Html.fromHtml("<font color='#c70c1e'>Password Error</font>"));
+                        mTextTip.setText(Html.fromHtml("<font color='#c70c1e'>Password Error </font>" + (3 - tryTimes) + "<font color='#c70c1e'> left</font>"));
 
                         // 左右移动动画
                         Animation shakeAnimation = AnimationUtils.loadAnimation(GestureVerifyActivity.this, R.anim.shake);
                         mTextTip.startAnimation(shakeAnimation);
+
+                        if (tryTimes >= 3) {
+                            Intent intent = new Intent();
+                            intent.putExtra("verify_result", false);
+                            setResult(Activity.RESULT_OK,intent);
+
+                            GestureVerifyActivity.this.finish();
+                        }
+
                     }
                 });
 

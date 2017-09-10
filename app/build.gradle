@@ -13,7 +13,7 @@ android {
     }
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
@@ -40,4 +40,21 @@ dependencies {
     compile 'com.github.PhilJay:MPAndroidChart:v3.0.2'
     testCompile 'junit:junit:4.12'
     compile project(':GestureLock')
+    compile files('libs/MobCommons-2017.0823.1556.jar')
+    compile files('libs/MobTools-2017.0823.1556.jar')
+    compile files('libs/ShareSDK-Core-3.0.2.jar')
+    compile files('libs/ShareSDK-Dropbox-3.0.2.jar')
+    compile files('libs/ShareSDK-Email-3.0.2.jar')
+    compile files('libs/ShareSDK-Facebook-3.0.2.jar')
+    compile files('libs/ShareSDK-GooglePlus-3.0.2.jar')
+    compile files('libs/ShareSDK-Linkedin-3.0.2.jar')
+    compile files('libs/ShareSDK-Pinterest-3.0.2.jar')
+    compile files('libs/ShareSDK-QQ-3.0.2.jar')
+    compile files('libs/ShareSDK-QZone-3.0.2.jar')
+    compile files('libs/ShareSDK-ShortMessage-3.0.2.jar')
+    compile files('libs/ShareSDK-Twitter-3.0.2.jar')
+    compile files('libs/ShareSDK-Wechat-3.0.2.jar')
+    compile files('libs/ShareSDK-Wechat-Core-3.0.2.jar')
+    compile files('libs/ShareSDK-Wechat-Favorite-3.0.2.jar')
+    compile files('libs/ShareSDK-Wechat-Moments-3.0.2.jar')
 }

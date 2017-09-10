@@ -25,8 +25,8 @@ import butterknife.OnClick;
 public class MainActivity extends BaseActivity {
 
     public static final int TWICE_BACK = 1;
-    /*@Bind(R.id.tv_title)*/
-    /*TextView tvTitle;*/
+    public static final String ME_FRAGMENT = "me_fragment";
+
     @Bind(R.id.framelayout)
     FrameLayout framelayout;
     @Bind(R.id.btn_main)
@@ -37,10 +37,6 @@ public class MainActivity extends BaseActivity {
     RadioButton btnMe;
     @Bind(R.id.btn_more)
     RadioButton btnMore;
-    /*@Bind(R.id.iv_back)*/
-    /*ImageView ivBack;*/
-    /*@Bind(R.id.iv_setting)*/
-    /*ImageView ivSetting;*/
 
     private FragmentTransaction transaction;
     private MainFragment mainFragment;
@@ -88,8 +84,6 @@ public class MainActivity extends BaseActivity {
                     transaction.add(R.id.framelayout, mainFragment);
                 }
                 transaction.show(mainFragment);
-
-                //tvTitle.setText("Main");
                 break;
 
             case R.id.btn_invest:
@@ -98,17 +92,15 @@ public class MainActivity extends BaseActivity {
                     transaction.add(R.id.framelayout, investFragment);
                 }
                 transaction.show(investFragment);
-                //tvTitle.setText("Invest");
                 break;
 
             case R.id.btn_me:
                 if (meFragment == null) {
                     meFragment = new MeFragment();
-                    transaction.add(R.id.framelayout, meFragment);
+                    transaction.add(R.id.framelayout, meFragment, ME_FRAGMENT);
                 }
                 transaction.show(meFragment);
-                //tvTitle.setText("My Asset");
-                //ivSetting.setVisibility(View.VISIBLE);
+
                 break;
 
             case R.id.btn_more:
@@ -117,7 +109,6 @@ public class MainActivity extends BaseActivity {
                     transaction.add(R.id.framelayout, moreFragment);
                 }
                 transaction.show(moreFragment);
-                //tvTitle.setText("More");
                 break;
         }
         transaction.commit();
@@ -136,7 +127,6 @@ public class MainActivity extends BaseActivity {
         if (moreFragment != null) {
             transaction.hide(moreFragment);
         }
-        //ivSetting.setVisibility(View.GONE);
     }
 
     @Override

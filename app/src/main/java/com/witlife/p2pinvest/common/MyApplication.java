@@ -4,6 +4,8 @@ import android.app.Application;
 import android.content.Context;
 import android.os.Handler;
 
+import cn.sharesdk.framework.ShareSDK;
+
 /**
  * Created by bruce on 23/08/2017.
  */
@@ -25,5 +27,6 @@ public class MyApplication extends Application {
         mainThreadId = android.os.Process.myTid();
 
         //CrashHandler.getInstance().init();
+
     }
 }
