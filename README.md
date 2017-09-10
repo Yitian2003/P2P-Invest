@@ -25,3 +25,9 @@ Finished Feature:
 <br>
 7. set up geture lock feature
 </br>
+<br>
+8. share to friends
+</br>
+<br>
+9. update and download new upadte.
+</br>
