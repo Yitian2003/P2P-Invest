@@ -1,6 +1,7 @@
 # P2P-Invest
 p2p platform for lending
 
+<br>![alt tag](https://github.com/Yitian2003/P2P-Invest/blob/master/2017-09-11_13h04_23.gif)</br>
 <br>
 Finished Feature:
 </br>
