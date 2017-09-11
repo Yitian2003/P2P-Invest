@@ -106,42 +106,42 @@ public class MeFragment extends BaseFragment {
             public void onClick(View view) {
                 Bundle bundle = new Bundle();
                 bundle.putSerializable(USER_INFO, user);
-                ((BaseActivity)getActivity()).startNewActivity(UserInfoActivity.class, bundle);
+                ((BaseActivity) getActivity()).startNewActivity(UserInfoActivity.class, bundle);
             }
         });
 
         btnDeposit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((BaseActivity)getActivity()).startNewActivity(DepositActivity.class, null);
+                ((BaseActivity) getActivity()).startNewActivity(DepositActivity.class, null);
             }
         });
 
         btnWithdraw.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((BaseActivity)getActivity()).startNewActivity(WithdrawActivity.class, null);
+                ((BaseActivity) getActivity()).startNewActivity(WithdrawActivity.class, null);
             }
         });
 
         rlInvest.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((BaseActivity)getActivity()).startNewActivity(LineCharActivity.class, null);
+                ((BaseActivity) getActivity()).startNewActivity(LineCharActivity.class, null);
             }
         });
 
         rlInvestDirect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((BaseActivity)getActivity()).startNewActivity(BarCharActivity.class, null);
+                ((BaseActivity) getActivity()).startNewActivity(BarCharActivity.class, null);
             }
         });
 
         rlAsset.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((BaseActivity)getActivity()).startNewActivity(PieCharActivity.class, null);
+                ((BaseActivity) getActivity()).startNewActivity(PieCharActivity.class, null);
             }
         });
     }
@@ -150,32 +150,39 @@ public class MeFragment extends BaseFragment {
         SharedPreferences sp = this.getActivity().getSharedPreferences(USER_INFO, Context.MODE_PRIVATE);
         String name = sp.getString("name", "");
 
-        doLogin(name);
+        if (TextUtils.isEmpty(name)) {
+            doLogin(name);
+        } else {
+            doUser();
+        }
+
     }
 
-    private void doLogin(String name) {
-        if (TextUtils.isEmpty(name)) {
-            new AlertDialog.Builder(this.getContext())
-                    .setTitle("Notice")
-                    .setMessage("You haven's login.")
-                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            ((BaseActivity) getActivity()).startNewActivity(LoginActivity.class, null);
-                        }
-                    })
-                    .setCancelable(false)
-                    .show();
+    private void doUser() {
+        // check whether gesture lock is on, if is on, input gesture
+        SharedPreferences sp = getActivity().getSharedPreferences("secret_protect", Context.MODE_PRIVATE);
+        boolean isChecked = sp.getBoolean("isChecked", false);
+        if (isChecked) {
+            Intent intent = new Intent(getActivity(), GestureVerifyActivity.class);
+            startActivityForResult(intent, VERIFY_CODE);
         } else {
-
-            // check whether gesture lock is on, if is on, input gesture
-            SharedPreferences sp = getActivity().getSharedPreferences("secret_protect", Context.MODE_PRIVATE);
-            boolean isChecked = sp.getBoolean("isChecked", false);
-            if(isChecked){
-                Intent intent = new Intent(getActivity(), GestureVerifyActivity.class);
-                startActivityForResult(intent, VERIFY_CODE);
-            }
+            displayUserInfo();
         }
+    }
+
+
+    private void doLogin(String name) {
+        new AlertDialog.Builder(this.getContext())
+                .setTitle("Notice")
+                .setMessage("You haven's login.")
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        ((BaseActivity) getActivity()).startNewActivity(LoginActivity.class, null);
+                    }
+                })
+                .setCancelable(false)
+                .show();
     }
 
     @Override
@@ -188,37 +195,14 @@ public class MeFragment extends BaseFragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         boolean isSuccessVerified;
 
-        if (requestCode == VERIFY_CODE){
+        if (requestCode == VERIFY_CODE) {
             isSuccessVerified = data.getBooleanExtra("verify_result", false);
 
-            if(isSuccessVerified) {
-                user = ((BaseActivity) this.getActivity()).readUser();
-
-                tvName.setText(user.getName());
-
-                if(readImage()) return;// if there is image in local, do not request network image/
-
-                Picasso.with(getActivity())
-                        .load(user.getImageurl()).transform(new Transformation() {
-                    @Override
-                    public Bitmap transform(Bitmap source) {
-
-                        //rescale bitmap
-                        Bitmap bitmap = BitmapUtils.zoom(source, UIUtils.dp2px(70), UIUtils.dp2px(70));
-
-                        bitmap = BitmapUtils.circleBitmap(source);
-                        source.recycle();
-                        return bitmap;
-                    }
-
-                    @Override
-                    public String key() {
-                        return "";
-                    }
-                })
-                        .into(ivAvator);
+            if (isSuccessVerified) {
+                displayUserInfo();
             } else {
-
+                ((BaseActivity) getActivity()).removeAll();
+                ((BaseActivity) getActivity()).startNewActivity(MainActivity.class, null);
             }
         }
     }
@@ -235,7 +219,7 @@ public class MeFragment extends BaseFragment {
 
         File file = new File(filesDir, "icon.png");
 
-        if(file.exists()){
+        if (file.exists()) {
             // file --> memory
             Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
             ivAvator.setImageBitmap(bitmap);
@@ -248,5 +232,33 @@ public class MeFragment extends BaseFragment {
     public void onDestroyView() {
         super.onDestroyView();
         ButterKnife.unbind(this);
+    }
+
+    private void displayUserInfo(){
+        user = ((BaseActivity) this.getActivity()).readUser();
+
+        tvName.setText(user.getName());
+
+        if (readImage()) return;// if there is image in local, do not request network image/
+
+        Picasso.with(getActivity())
+                .load(user.getImageurl()).transform(new Transformation() {
+            @Override
+            public Bitmap transform(Bitmap source) {
+
+                //rescale bitmap
+                Bitmap bitmap = BitmapUtils.zoom(source, UIUtils.dp2px(70), UIUtils.dp2px(70));
+
+                bitmap = BitmapUtils.circleBitmap(source);
+                source.recycle();
+                return bitmap;
+            }
+
+            @Override
+            public String key() {
+                return "";
+            }
+        })
+                .into(ivAvator);
     }
 }

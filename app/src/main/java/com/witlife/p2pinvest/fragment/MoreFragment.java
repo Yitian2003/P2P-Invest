@@ -134,7 +134,7 @@ public class MoreFragment extends BaseFragment {
         // titleUrl是标题的网络链接，仅在人人网和QQ空间使用
         oks.setTitleUrl("http://sharesdk.cn");
         // text是分享文本，所有平台都需要这个字段
-        oks.setText("This is awesome app platphome");
+        oks.setText("This is awesome P2P Invest app platform");
         // imagePath是图片的本地路径，Linked-In以外的平台都支持此参数
         //oks.setImagePath("/sdcard/test.jpg");//确保SDcard下面存在此张图片
         // url仅在微信（包括好友和朋友圈）中使用

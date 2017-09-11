@@ -46,7 +46,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:text="main"
-                    android:textSize="28sp" />
+                    android:textSize="22sp" />
 
                 <ImageView
                     android:layout_width="36dp"
