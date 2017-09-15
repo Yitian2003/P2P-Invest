@@ -252,6 +252,8 @@ public class MeFragment extends BaseFragment {
                 bitmap = BitmapUtils.circleBitmap(source);
                 source.recycle();
                 return bitmap;
+
+                
             }
 
             @Override
